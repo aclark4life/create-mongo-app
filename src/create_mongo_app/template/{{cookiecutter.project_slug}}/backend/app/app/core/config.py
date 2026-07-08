@@ -44,6 +44,11 @@ class Settings(BaseSettings):
 
     MULTI_MAX: int = 20
 
+    # Hosts the /proxy endpoint is permitted to forward requests to. Empty means
+    # the proxy is disabled (deny-by-default) to prevent SSRF. Populate with the
+    # explicit upstream hosts your frontend needs, e.g. ["api.example.com"].
+    PROXY_ALLOWED_HOSTS: Annotated[list[str] | str, BeforeValidator(parse_cors)] = []
+
     # COMPONENT SETTINGS
     MONGO_DATABASE: str
     MONGO_DATABASE_URI: str
