@@ -1,4 +1,3 @@
-import secrets
 from typing import Any, Dict, List, Union, Annotated
 
 from pydantic import AnyHttpUrl, EmailStr, HttpUrl, field_validator, BeforeValidator
@@ -14,8 +13,12 @@ def parse_cors(v: Any) -> list[str] | str:
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
-    TOTP_SECRET_KEY: str = secrets.token_urlsafe(32)
+    # Required, no default: a per-process random default silently invalidates all
+    # JWTs on restart, breaks multi-worker deployments (each worker signs with a
+    # different key), and permanently locks out TOTP users (the key encrypts
+    # stored TOTP secrets). Provide a stable value via the environment.
+    SECRET_KEY: str
+    TOTP_SECRET_KEY: str
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60 * 30
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 60 * 60 * 24 * 30
