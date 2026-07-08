@@ -1,10 +1,10 @@
-from pymongo.database import Database
+from pymongo.asynchronous.database import AsyncDatabase
 
 from app import crud, schemas
 from app.core.config import settings
 
 
-async def init_db(db: Database) -> None:
+async def init_db(db: AsyncDatabase) -> None:
     user = await crud.user.get_by_email(db, email=settings.FIRST_SUPERUSER)
     if not user:
         # Create user auth
