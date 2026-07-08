@@ -1,0 +1,5 @@
+graft src/create_mongo_app/template
+include LICENSE
+include README.md
+global-exclude __pycache__
+global-exclude *.py[cod]

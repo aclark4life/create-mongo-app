@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "create-mongo-app"
+version = "0.1.0"
+description = "Scaffold a full-stack FastAPI + MongoDB application, the way create-react-app scaffolds a React app."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Jeffrey A. Clark", email = "alex.clark@mongodb.com" }]
+keywords = ["fastapi", "mongodb", "cookiecutter", "scaffold", "template", "generator"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = [
+    "typer>=0.12",
+    "cookiecutter>=2.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/aclark4life/create-mongo-app"
+Repository = "https://github.com/aclark4life/create-mongo-app"
+
+[project.scripts]
+create-mongo-app = "create_mongo_app.cli:app"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# The vendored cookiecutter template ships as package data. The recursive glob
+# captures nested files; MANIFEST.in (graft) ensures dotfiles such as .env and
+# .gitignore make it into the sdist as well.
+[tool.setuptools.package-data]
+create_mongo_app = ["template/**/*", "template/**/.*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
