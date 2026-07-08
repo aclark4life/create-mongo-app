@@ -1,13 +1,6 @@
 # create-mongo-app
 
-Scaffold a full-stack **FastAPI + MongoDB** application from a single command —
-the way [`create-react-app`](https://github.com/facebook/create-react-app)
-scaffolds a React app.
-
-It packages the
-[full-stack-fastapi-mongodb](https://github.com/mongodb-labs/full-stack-fastapi-mongodb)
-cookiecutter template inside a pip-installable Python package, so you don't need
-to install or invoke `cookiecutter` yourself — just `pip install` and run.
+Scaffold a full-stack FastAPI + MongoDB application from a single command.
 
 ## Install
 
