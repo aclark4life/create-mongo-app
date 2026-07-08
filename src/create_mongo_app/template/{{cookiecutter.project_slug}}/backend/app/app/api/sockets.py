@@ -20,14 +20,17 @@ async def receive_request(*, websocket: WebSocket) -> dict:
 
 
 def sanitize_data_request(data: any) -> any:
-    # Putting here for want of a better place
+    # Putting here for want of a better place.
+    # Only drop None entries. The previous `if k and v or isinstance(v, bool)`
+    # (which parses as `(k and v) or isinstance(v, bool)`) silently discarded
+    # legitimate falsy values like 0, 0.0, "", and empty collections.
     if isinstance(data, (list, tuple, set)):
-        return type(data)(sanitize_data_request(x) for x in data if x or isinstance(x, bool))
+        return type(data)(sanitize_data_request(x) for x in data if x is not None)
     elif isinstance(data, dict):
         return type(data)(
             (sanitize_data_request(k), sanitize_data_request(v))
             for k, v in data.items()
-            if k and v or isinstance(v, bool)
+            if k is not None and v is not None
         )
     else:
         return data
