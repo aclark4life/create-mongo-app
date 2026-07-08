@@ -92,7 +92,9 @@ async def read_all_users(
     """
     Retrieve all current users.
     """
-    return await crud.user.get_multi(db=db, page=page)
+    # page_break=True is required for `page` to take effect; without it get_multi
+    # ignores pagination and streams the entire user collection on every call.
+    return await crud.user.get_multi(db=db, page=page, page_break=True)
 
 
 @router.post("/new-totp", response_model=schemas.NewTOTP)
