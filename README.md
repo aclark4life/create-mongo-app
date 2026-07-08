@@ -50,7 +50,7 @@ create-mongo-app my-app --yes \
 
 The generated project is the full-stack-fastapi-mongodb layout:
 
-- **backend/** — FastAPI app with MongoDB (ODMantic/Motor), auth, Celery worker
+- **backend/** — FastAPI app with MongoDB (PyMongo async driver), auth, Celery worker
 - **frontend/** — Next.js frontend
 - **docker-compose** — MongoDB, backend, frontend, Traefik, Flower
 
