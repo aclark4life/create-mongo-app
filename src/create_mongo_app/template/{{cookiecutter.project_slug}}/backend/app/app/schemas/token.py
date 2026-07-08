@@ -33,8 +33,12 @@ class TokenPayload(BaseModel):
 
 
 class MagicTokenPayload(BaseModel):
-    sub: PyObjectId | None = None
-    fingerprint: PyObjectId | None = None
+    # Both values are JWT ``sub``/``fingerprint`` claims minted as ``uuid4``
+    # strings (see ``security.create_magic_tokens``), so they are plain strings
+    # rather than MongoDB ObjectIds. Typing them as ``PyObjectId`` made every
+    # magic-link / password-reset validation raise ``ValidationError`` -> 403.
+    sub: str | None = None
+    fingerprint: str | None = None
 
 
 class WebToken(BaseModel):
