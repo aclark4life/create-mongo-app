@@ -45,6 +45,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         user = await self.get_by_email(db, email=email)
         if not user:
             return None
+        # Magic-link users are created without a password (hashed_password is
+        # None); passing None to passlib raises, so reject password login here.
+        if not user.hashed_password:
+            return None
         if not verify_password(plain_password=password, hashed_password=user.hashed_password): # noqa
             return None
         return user
