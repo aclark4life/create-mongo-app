@@ -258,4 +258,8 @@ async def reset_password(
     hashed_password = security.get_password_hash(new_password)
     user.hashed_password = hashed_password
     await user.save()
+    # Revoke all existing refresh tokens so a previously-stolen session cannot
+    # survive the reset (e.g. after a suspected compromise).
+    for token in await crud.token.get_multi(db=db, user=user):
+        await crud.token.remove(db=db, db_obj=token)
     return {"msg": "Password updated successfully."}
