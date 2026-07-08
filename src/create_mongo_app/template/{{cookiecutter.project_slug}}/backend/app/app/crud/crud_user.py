@@ -8,6 +8,12 @@ from app.models.user import User
 from app.schemas.user import UserCreate, UserInDB, UserUpdate
 from app.schemas.totp import NewTOTP
 
+# A precomputed hash used to perform a dummy password verification when no valid
+# credential exists, so authentication takes ~constant time regardless of
+# whether the account exists / has a password. Prevents user enumeration via
+# response-time side channels.
+_DUMMY_PASSWORD_HASH = get_password_hash("dummy-password-for-constant-time-auth")
+
 
 # ODM, Schema, Schema
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -43,13 +49,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     async def authenticate(self, db: AsyncDatabase, *, email: str, password: str) -> User | None: # noqa
         user = await self.get_by_email(db, email=email)
-        if not user:
-            return None
-        # Magic-link users are created without a password (hashed_password is
-        # None); passing None to passlib raises, so reject password login here.
-        if not user.hashed_password:
-            return None
-        if not verify_password(plain_password=password, hashed_password=user.hashed_password): # noqa
+        # Always run a password verification (against the real hash, or a dummy
+        # one when the account is missing / passwordless) so the response time
+        # does not reveal whether the account exists. Magic-link users have
+        # hashed_password=None and cannot log in with a password.
+        hashed_password = user.hashed_password if user and user.hashed_password else _DUMMY_PASSWORD_HASH
+        password_ok = verify_password(plain_password=password, hashed_password=hashed_password)
+        if not user or not user.hashed_password or not password_ok:
             return None
         return user
 
