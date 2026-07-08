@@ -10,21 +10,26 @@ DRIVER_INFO = DriverInfo(name="full-stack-fastapi-mongodb", version=__version__)
 
 
 class _MongoClientSingleton:
-    _instances: dict = {}
+    _instance = None
+    _loop = None
 
     def __new__(cls):
         try:
             loop = asyncio.get_running_loop()
         except RuntimeError:
             loop = None
-        loop_id = id(loop)
-        if loop_id not in cls._instances:
+        # Rebind the client when the running loop changes rather than caching by
+        # id(loop): recycled ids (after a loop is GC'd) could otherwise hand back
+        # a client bound to a dead loop, and the old dict never evicted stale
+        # entries. Holding the loop reference keeps the comparison reliable.
+        if cls._instance is None or cls._loop is not loop:
             instance = super().__new__(cls)
             instance.mongo_client = AsyncMongoClient(
                 settings.MONGO_DATABASE_URI, driver=DRIVER_INFO
             )
-            cls._instances[loop_id] = instance
-        return cls._instances[loop_id]
+            cls._instance = instance
+            cls._loop = loop
+        return cls._instance
 
 
 def MongoDatabase() -> AsyncDatabase:
