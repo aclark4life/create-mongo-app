@@ -2,6 +2,10 @@
 
 Scaffold a full-stack FastAPI + MongoDB application from a single command.
 
+The generated app ships an interactive API (Swagger UI) out of the box:
+
+![demo-shop API docs](docs/img/demo-shop-docs.png)
+
 ## Install
 
 ```bash
