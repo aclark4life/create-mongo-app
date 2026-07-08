@@ -110,7 +110,10 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
             "project_name": settings.PROJECT_NAME,
             "username": email,
             "email": email_to,
-            "valid_hours": int(settings.ACCESS_TOKEN_EXPIRE_SECONDS / 60),
+            # The reset token is a magic token that expires after
+            # ACCESS_TOKEN_EXPIRE_SECONDS, so report minutes (the previous
+            # "valid_hours" divided seconds by 60, stating a 60x-too-large window).
+            "valid_minutes": int(settings.ACCESS_TOKEN_EXPIRE_SECONDS / 60),
             "link": link,
         },
     )
