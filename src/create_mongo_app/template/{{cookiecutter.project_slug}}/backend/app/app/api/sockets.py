@@ -1,4 +1,6 @@
 from __future__ import annotations
+from typing import Any
+
 from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
 from websockets.exceptions import ConnectionClosedError
@@ -19,7 +21,7 @@ async def receive_request(*, websocket: WebSocket) -> dict:
         return {}
 
 
-def sanitize_data_request(data: any) -> any:
+def sanitize_data_request(data: Any) -> Any:
     # Putting here for want of a better place.
     # Only drop None entries. The previous `if k and v or isinstance(v, bool)`
     # (which parses as `(k and v) or isinstance(v, bool)`) silently discarded
